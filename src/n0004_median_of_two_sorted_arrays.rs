@@ -31,10 +31,27 @@ pub struct Solution {}
 // submission codes start here
 
 // TODO: nth slice
+use std::rc::Rc;
 impl Solution {
     pub fn find_median_sorted_arrays(nums1: Vec<i32>, nums2: Vec<i32>) -> f64 {
-        1.0
+        let (lhs,rhs) = if nums1.len() >nums2.len(){(Rc::new(nums2),Rc::new(nums1))}else{(Rc::new(nums1),Rc::new(nums2))};
+        let (n,m) = (Rc::clone(&lhs).len(),Rc::clone(&rhs).len());
+        let (mut lmax1,mut rmin1,mut lmax2,mut rmin2) = (0,0,0,0);
+        let (mut lo,mut hi) = (0,n*2);
+        while lo <= hi{
+            let c1 = (lo+hi)/2;
+            let c2 = m+n-c1;
+            lmax1 = if c1==0{i32::min_value()}else{Rc::clone(&lhs)[(c1-1)/2]};
+            rmin1 = if c1==2*n{i32::max_value()}else{Rc::clone(&lhs)[c1/2]};
+            lmax2 = if c2==0{i32::min_value()}else{Rc::clone(&rhs)[(c2-1)/2]};
+            rmin2 = if c2==2*m{i32::max_value()}else{Rc::clone(&rhs)[c2/2]};
+
+        if lmax1>rmin2{hi=c1-1}
+        else if lmax2>rmin1{lo = c1+1}
+        else{break}
     }
+    (std::cmp::max(lmax1, lmax2) + std::cmp::min(rmin1, rmin2))as f64 / 2.0
+}
 }
 
 // submission codes end
